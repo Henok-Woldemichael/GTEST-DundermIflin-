@@ -1,0 +1,59 @@
+stages:
+   - build
+   - test
+   - quality
+   - docs
+
+test-clean:
+   stage: build
+   script:
+      - make testPaper-clean
+   artifacts:
+      paths:
+         - testPaper-clean
+
+test-bugs:
+   stage: build
+   script:
+      - make testPaper-bugs
+   artifacts:
+      paths:
+         - testPaper-bugs
+
+clean:
+   stage: test
+   script:
+      - testPaper-clean
+
+bugs:
+   script:
+      - testPaper-bugs
+   allow_failure: true
+
+memory-leaks:
+   stage: quality
+   script:
+      - make memcheck
+
+staticAnalysis:
+   stage: quality
+   script:
+      - make static
+   only:
+      - master
+
+styleChecking:
+   stage: quality
+   script:
+      - make style
+   only:
+      - master
+
+documentation:
+   stage: docs
+   script:
+      - make docs
+   artifacts:
+      paths:
+         - docs
+      expire_in: 14 days
